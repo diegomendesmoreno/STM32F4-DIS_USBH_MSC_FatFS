@@ -57,10 +57,17 @@
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-FATFS USBDISKFatFs;           /* File system object for USB disk logical drive */
-FIL MyFile;                   /* File object */
-char USBDISKPath[4];          /* USB Host logical drive path */
-extern ApplicationTypeDef Appli_state;
+
+//USB Variables
+FATFS USBDISKFatFs;                             //File system object for USB disk logical drive
+FIL MyFile;                                     //File object
+extern char USBH_Path[4];                       //USBH logical drive path
+FRESULT res;                                    //FatFs function common result code
+uint32_t byteswritten, bytesread;               //File write/read counts
+uint8_t wtext[] = "Congrats, it's working :)";  //File write buffer
+uint8_t rtext[100];                             //File read buffer
+extern ApplicationTypeDef Appli_state;          //Application state
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -82,8 +89,6 @@ int main(void)
 
   /* USER CODE BEGIN 1 */
   
-  Appli_state = APPLICATION_IDLE;
-  
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
@@ -100,7 +105,10 @@ int main(void)
   MX_USB_HOST_Init();
 
   /* USER CODE BEGIN 2 */
-
+  
+  //Unlink USB disk Drivers
+  FATFS_UnLinkDriver(USBH_Path);
+  
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -112,7 +120,7 @@ int main(void)
 
   /* USER CODE BEGIN 3 */
     
-    /* Mass Storage Application State Machine */
+    //Mass Storage Application State Machine
     switch(Appli_state)
     {
       case APPLICATION_READY:
@@ -182,72 +190,70 @@ void SystemClock_Config(void)
   */
 static void MSC_Application(void)
 {
-  FRESULT res;                                          /* FatFs function common result code */
-  uint32_t byteswritten, bytesread;                     /* File write/read counts */
-  uint8_t wtext[] = "This is STM32 working with FatFs"; /* File write buffer */
-  uint8_t rtext[100];                                   /* File read buffer */
+  //Link USB disk Drivers
+  FATFS_LinkDriver(&USBH_Driver, USBH_Path);
   
-  /* Register the file system object to the FatFs module */
-  res = f_mount(&USBDISKFatFs, (TCHAR const*)USBDISKPath, 0);
+  //Register the file system object to the FatFs module
+  res = f_mount(&USBDISKFatFs, (TCHAR const*)USBH_Path, 0);
   if(res != FR_OK)
   {
-    /* FatFs Initialization Error */
+    //FatFs Initialization Error
     Error_Handler();
   }
   else
   {
-    /* Create and Open a new text file object with write access */
-    res = f_open(&MyFile, "STM32.TXT", FA_CREATE_ALWAYS | FA_WRITE);
+    //Create and Open a new text file object with write access
+    res = f_open(&MyFile, "IT_WORKS.TXT", FA_CREATE_ALWAYS | FA_WRITE);
     if(res != FR_OK)
     {
-      /* 'STM32.TXT' file Open for write Error */
+      //'IT_WORKS.TXT' file Open for write Error
       Error_Handler();
     }
     else
     {
-      /* Write data to the text file */
+      //Write data to the text file
       res = f_write(&MyFile, wtext, sizeof(wtext), (void *)&byteswritten);
       
       if((byteswritten == 0) || (res != FR_OK))
       {
-        /* 'STM32.TXT' file Write or EOF Error */
+        //'IT_WORKS.TXT' file Write or EOF Error
         Error_Handler();
       }
       else
       {
-        /* Close the open text file */
+        //Close the open text file
         f_close(&MyFile);
         
-        /* Open the text file object with read access */
-        if(f_open(&MyFile, "STM32.TXT", FA_READ) != FR_OK)
+        //Open the text file object with read access
+        if(f_open(&MyFile, "IT_WORKS.TXT", FA_READ) != FR_OK)
         {
-          /* 'STM32.TXT' file Open for read Error */
+          //'IT_WORKS.TXT' file Open for read Error
           Error_Handler();
         }
         else
         {
-          /* Read data from the text file */
+          //Read data from the text file
           res = f_read(&MyFile, rtext, sizeof(rtext), (void *)&bytesread);
           
           if((bytesread == 0) || (res != FR_OK))
           {
-            /* 'STM32.TXT' file Read or EOF Error */
+            //'IT_WORKS.TXT' file Read or EOF Error
             Error_Handler();
           }
           else
           {
-            /* Close the open text file */
+            //Close the open text file
             f_close(&MyFile);
             
-            /* Compare read data with the expected data */
+            //Compare read data with the expected data
             if((bytesread != byteswritten))
             {
-              /* Read data is different from the expected data */
+              //Read data is different from the expected data
               Error_Handler();
             }
             else
             {
-              /* Success of the demo: no error occurrence */
+              //Success of the demo: no error occurrence: Turn LED4_GREEN ON
               HAL_GPIO_WritePin(GPIOD, LED4_GREEN_Pin, GPIO_PIN_SET);
             }
           }
@@ -256,8 +262,8 @@ static void MSC_Application(void)
     }
   }
   
-  /* Unlink the USB disk I/O driver */
-  FATFS_UnLinkDriver(USBDISKPath);
+  //Unlink USB disk Drivers
+  FATFS_UnLinkDriver(USBH_Path);
 }
 
 /* USER CODE END 4 */
@@ -271,7 +277,7 @@ void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler */
   
-  /* Turn LED5 on */
+  //Turn LED5_RED ON
   HAL_GPIO_WritePin(GPIOD, LED5_RED_Pin, GPIO_PIN_SET);
   
   /* User can add his own implementation to report the HAL error return state */
