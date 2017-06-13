@@ -33,7 +33,7 @@ STM32F4-DIS_USBH_MSC_FatFS (ENGLISH)
 What do you need:
 --------------
 # **Software**
-- [IAR Embedded Workbench for ARM (EWARM)](http://supp.iar.com/Download/SW/?item=EWARM-EVAL) – IDE and Compiler (32 KB size-limited evaluation / 16KB for Cortex-M0/M0+/M1)
+- [IAR Embedded Workbench for ARM (EWARM)](http://supp.iar.com/Download/SW/?item=EWARM-EVAL) – IDE and Compiler (32 KB size-limited evaluation)
 
 or
 - [System Workbench for STM32 (SW4STM32)](http://www.openstm32.org/HomePage) – IDE and Compilador (GCC)
