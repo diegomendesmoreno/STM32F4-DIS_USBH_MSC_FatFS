@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
-  * @file   fatfs.c
-  * @brief  Code for fatfs applications
+  * File Name          : main.h
+  * Description        : This file contains the common defines of the application
   ******************************************************************************
   * This notice applies to any and all portions of this file
   * that are not between comment pairs USER CODE BEGIN and
@@ -45,40 +45,46 @@
   *
   ******************************************************************************
   */
+/* Define to prevent recursive inclusion -------------------------------------*/
+#ifndef __MAIN_H
+#define __MAIN_H
+  /* Includes ------------------------------------------------------------------*/
 
-#include "fatfs.h"
+/* USER CODE BEGIN Includes */
 
-uint8_t retUSBH;    /* Return value for USBH */
-char USBH_Path[4];  /* USBH logical drive path */
+/* USER CODE END Includes */
 
-/* USER CODE BEGIN Variables */
+/* Private define ------------------------------------------------------------*/
 
-/* USER CODE END Variables */    
+#define OTG_FS_PowerSwitchOn_Pin GPIO_PIN_0
+#define OTG_FS_PowerSwitchOn_GPIO_Port GPIOC
+#define USER_BUTTON_Pin GPIO_PIN_0
+#define USER_BUTTON_GPIO_Port GPIOA
+#define USER_BUTTON_EXTI_IRQn EXTI0_IRQn
+#define LED4_LEFT_GREEN_Pin GPIO_PIN_12
+#define LED4_LEFT_GREEN_GPIO_Port GPIOD
+#define LED3_UP_ORANGE_Pin GPIO_PIN_13
+#define LED3_UP_ORANGE_GPIO_Port GPIOD
+#define LED5_RIGHT_RED_Pin GPIO_PIN_14
+#define LED5_RIGHT_RED_GPIO_Port GPIOD
+#define LED6_DOWN_BLUE_Pin GPIO_PIN_15
+#define LED6_DOWN_BLUE_GPIO_Port GPIOD
 
-void MX_FATFS_Init(void) 
-{
-  /*## FatFS: Link the USBH driver ###########################*/
-  retUSBH = FATFS_LinkDriver(&USBH_Driver, USBH_Path);
+/* USER CODE BEGIN Private defines */
 
-  /* USER CODE BEGIN Init */
-  /* additional user code for init */
-  /* USER CODE END Init */
-}
+/* USER CODE END Private defines */
+
+void _Error_Handler(char *, int);
+
+#define Error_Handler() _Error_Handler(__FILE__, __LINE__)
 
 /**
-  * @brief  Gets Time from RTC 
-  * @param  None
-  * @retval Time in DWORD
-  */
-DWORD get_fattime(void)
-{
-  /* USER CODE BEGIN get_fattime */
-  return 0;
-  /* USER CODE END get_fattime */  
-}
+  * @}
+  */ 
 
-/* USER CODE BEGIN Application */
-     
-/* USER CODE END Application */
+/**
+  * @}
+*/ 
 
+#endif /* __MAIN_H */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
